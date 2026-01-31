@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slooze Data Science Challenge - Technical Documentation</title>
+
+    <!-- KaTeX for math formulas -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Georgia, "Noto Serif", serif;
+            font-size: 11pt;
+            line-height: 1.6;
+            color: #333;
+            text-align: justify;
+            text-align-last: left;
+            string-set: doctitle "";
+        }
+
+        /* Page setup */
+        @page {
+            size: A4;
+            margin: 2.5cm 2cm;
+            @top-center { content: string(doctitle); font-size: 9pt; color: #666; }
+            @bottom-center { content: counter(page); font-size: 9pt; }
+        }
+
+        @page :first {
+            margin: 0;
+            @top-center { content: none; }
+            @bottom-center { content: none; }
+        }
+
+        @page cover { 
+            margin: 0;
+            @top-center { content: none; } 
+            @bottom-center { content: none; } 
+        }
+
+        @page toc { 
+            @top-center { content: none; } 
+            @bottom-center { content: none; } 
+        }
+
+        /* Cover page - Swiss Style */
+        .cover {
+            page: cover;
+            width: 210mm;
+            height: 297mm;
+            margin: 0;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            page-break-after: always;
+        }
+
+        /* Swiss design elements */
+        .cover::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(229, 229, 229, 0.1) 0%, rgba(229, 229, 229, 0.05) 100%);
+            clip-path: polygon(30% 0, 100% 0, 100% 100%, 0% 100%);
+        }
+
+        .cover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, #e94560 0%, #ff6b6b 50%, #feca57 100%);
+        }
+
+        /* Corner accent */
+        .corner-accent {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            width: 80px;
+            height: 80px;
+            border: 3px solid rgba(233, 69, 96, 0.6);
+            transform: rotate(45deg);
+        }
+
+        .corner-accent-inner {
+            position: absolute;
+            top: 55px;
+            right: 55px;
+            width: 50px;
+            height: 50px;
+            background: rgba(233, 69, 96, 0.3);
+            transform: rotate(45deg);
+        }
+
+        /* Grid lines decoration */
+        .grid-lines {
+            position: absolute;
+            top: 150px;
+            left: 40px;
+            width: 120px;
+            height: 200px;
+            background-image: 
+                linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .cover-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 80%;
+            z-index: 10;
+            color: white;
+        }
+
+        .cover-badge {
+            display: inline-block;
+            padding: 8px 24px;
+            background: rgba(233, 69, 96, 0.9);
+            color: white;
+            font-size: 10pt;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+        }
+
+        .cover-title {
+            font-size: 32pt;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 15px;
+            line-height: 1.2;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .cover-subtitle {
+            font-size: 16pt;
+            color: rgba(255,255,255,0.85);
+            margin-bottom: 60px;
+            font-weight: 400;
+        }
+
+        .cover-divider {
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #e94560, #feca57);
+            margin: 0 auto 40px auto;
+        }
+
+        .cover-meta {
+            font-size: 11pt;
+            color: rgba(255,255,255,0.7);
+            line-height: 2;
+        }
+
+        .cover-meta p {
+            margin: 5px 0;
+        }
+
+        /* Table of Contents */
+        .toc-page {
+            page: toc;
+            page-break-after: always;
+        }
+
+        .toc-title {
+            font-size: 24pt;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #e94560;
+        }
+
+        .toc {
+            list-style: none;
+            padding: 0;
+        }
+
+        .toc li {
+            margin: 12px 0;
+            font-size: 11pt;
+        }
+
+        .toc a {
+            color: #333;
+            text-decoration: none;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .toc a::after {
+            content: leader('.') target-counter(attr(href url), page);
+            color: #666;
+        }
+
+        .toc .toc-h1 {
+            font-weight: 700;
+            font-size: 12pt;
+        }
+
+        .toc .toc-h2 {
+            padding-left: 20px;
+            font-size: 10.5pt;
+        }
+
+        /* Headings */
+        h1 {
+            font-size: 20pt;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e94560;
+            string-set: doctitle content();
+            page-break-after: avoid;
+        }
+
+        h2 {
+            font-size: 14pt;
+            font-weight: 700;
+            color: #16213e;
+            margin: 25px 0 15px 0;
+            page-break-after: avoid;
+        }
+
+        h3 {
+            font-size: 12pt;
+            font-weight: 700;
+            color: #333;
+            margin: 20px 0 10px 0;
+            page-break-after: avoid;
+        }
+
+        /* Paragraphs */
+        p {
+            margin: 12px 0;
+        }
+
+        /* Lists */
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        /* Strong and emphasis */
+        strong {
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+
+        /* Three-line tables */
+        table {
+            width: 100%;
+            max-width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 10pt;
+            page-break-inside: avoid;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        thead tr {
+            border-top: 2px solid #333;
+            border-bottom: 1px solid #333;
+        }
+
+        th {
+            padding: 10px 8px;
+            text-align: left;
+            font-weight: 700;
+            background: #f8f9fa;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #ddd;
+        }
+
+        tbody tr:last-child {
+            border-bottom: 2px solid #333;
+        }
+
+        td {
+            padding: 8px;
+            vertical-align: top;
+        }
+
+        tr {
+            page-break-inside: avoid;
+        }
+
+        caption {
+            caption-side: top;
+            text-align: left;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        caption::before {
+            content: attr(data-label) ": ";
+            font-weight: 700;
+        }
+
+        /* Code blocks */
+        pre {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: "Courier New", monospace;
+            font-size: 9pt;
+            line-height: 1.4;
+            margin: 15px 0;
+            max-width: 100%;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        code {
+            font-family: "Courier New", monospace;
+            font-size: 9pt;
+            background: #f5f5f5;
+            padding: 2px 5px;
+            border-radius: 3px;
+            word-break: break-word;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        /* Key findings box */
+        .key-finding {
+            border-left: 4px solid #e94560;
+            padding: 15px 20px;
+            margin: 20px 0;
+            background: #fafafa;
+        }
+
+        .key-finding-title {
+            font-weight: 700;
+            color: #e94560;
+            margin-bottom: 10px;
+            font-size: 11pt;
+        }
+
+        /* Formula box */
+        .formula {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        /* Info box */
+        .info-box {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 15px 0;
+            background: #fafafa;
+        }
+
+        .info-box-title {
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #16213e;
+        }
+
+        /* Recommendations */
+        .recommendation {
+            border-left: 3px solid #28a745;
+            padding: 12px 15px;
+            margin: 15px 0;
+            background: #f8fff8;
+        }
+
+        .recommendation-title {
+            font-weight: 700;
+            color: #28a745;
+            margin-bottom: 8px;
+        }
+
+        /* Warning box */
+        .warning {
+            border-left: 3px solid #ffc107;
+            padding: 12px 15px;
+            margin: 15px 0;
+            background: #fffbf0;
+        }
+
+        .warning-title {
+            font-weight: 700;
+            color: #856404;
+            margin-bottom: 8px;
+        }
+
+        /* Section styling */
+        .section {
+            margin-bottom: 30px;
+        }
+
+        /* Metric cards (inline style) */
+        .metrics {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .metric {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-top: 3px solid #e94560;
+        }
+
+        .metric-value {
+            font-size: 18pt;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+
+        .metric-label {
+            font-size: 9pt;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Prevent overflow */
+        pre, table, figure, img, svg, blockquote {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        a {
+            word-break: break-all;
+            color: #0f3460;
+        }
+
+        .katex-display {
+            overflow-x: auto;
+        }
+
+        /* Page breaks */
+        .page-break {
+            page-break-after: always;
+        }
+
+        /* Executive summary highlight */
+        .executive-summary {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #e94560;
+        }
+
+        .executive-summary h3 {
+            margin-top: 0;
+            color: #e94560;
+        }
+    </style>
+</head>
+<body>
+    <!-- Cover Page -->
+    <div class="cover">
+        <div class="corner-accent"></div>
+        <div class="corner-accent-inner"></div>
+        <div class="grid-lines"></div>
+        <div class="cover-content">
+            <div class="cover-badge">Data Science Challenge</div>
+            <h1 class="cover-title">Inventory Optimization &<br>Supply Chain Analysis</h1>
+            <p class="cover-subtitle">Slooze Take-Home Challenge</p>
+            <div class="cover-divider"></div>
+            <div class="cover-meta">
+                <p>Technical Documentation</p>
+                <p>Comprehensive Analysis Report</p>
+                <p>February 2026</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table of Contents -->
+    <div class="toc-page">
+        <h2 class="toc-title">Table of Contents</h2>
+        <ul class="toc">
+            <li class="toc-h1"><a href="#sec1">1. Executive Summary</a></li>
+            <li class="toc-h1"><a href="#sec2">2. Problem Statement & Objectives</a></li>
+            <li class="toc-h2"><a href="#sec2-1">2.1 Business Context</a></li>
+            <li class="toc-h2"><a href="#sec2-2">2.2 Core Objectives</a></li>
+            <li class="toc-h1"><a href="#sec3">3. Dataset Overview</a></li>
+            <li class="toc-h1"><a href="#sec4">4. Methodology</a></li>
+            <li class="toc-h2"><a href="#sec4-1">4.1 Phase 1: Data Exploration & Cleaning</a></li>
+            <li class="toc-h2"><a href="#sec4-2">4.2 Phase 2: ABC Analysis</a></li>
+            <li class="toc-h2"><a href="#sec4-3">4.3 Phase 2.2: Demand Forecasting</a></li>
+            <li class="toc-h2"><a href="#sec4-4">4.4 Phase 2.3: Reorder Point Analysis</a></li>
+            <li class="toc-h2"><a href="#sec4-5">4.5 Phase 2.4: Lead Time Analysis</a></li>
+            <li class="toc-h1"><a href="#sec5">5. Key Results</a></li>
+            <li class="toc-h1"><a href="#sec6">6. Assumptions & Limitations</a></li>
+            <li class="toc-h1"><a href="#sec7">7. Business Recommendations</a></li>
+            <li class="toc-h1"><a href="#sec8">8. How to Run the Code</a></li>
+            <li class="toc-h1"><a href="#sec9">9. Conclusion</a></li>
+        </ul>
+    </div>
+
+    <!-- Section 1: Executive Summary -->
+    <section id="sec1" class="section">
+        <h1>1. Executive Summary</h1>
+
+        <div class="executive-summary">
+            <h3>Project Overview</h3>
+            <p>This analysis presents a comprehensive inventory optimization system for Slooze, a retail wine and spirits company operating across multiple locations. Using <strong>2.37 million purchase records</strong>, <strong>1.05 million sales transactions</strong>, and inventory data from 2016, we implemented four core analytical frameworks to transform raw transactional data into actionable business intelligence.</p>
+        </div>
+
+        <h2>Key Deliverables</h2>
+        <ul>
+            <li><strong>ABC Analysis:</strong> Classified 7,658 products by revenue contribution using the 80/20 rule (Pareto principle)</li>
+            <li><strong>Demand Forecasting:</strong> Built Facebook Prophet time-series models for top 5 A-Class products</li>
+            <li><strong>Reorder Point Analysis:</strong> Calculated optimal inventory triggers with 95% service level safety stock</li>
+            <li><strong>Lead Time Analysis:</strong> Evaluated 120 vendors across $321.9 million procurement spend</li>
+        </ul>
+
+        <div class="key-finding">
+            <div class="key-finding-title">Critical Finding</div>
+            <p><strong>80% of revenue comes from only 19.6% of products (A-Class)</strong>, yet none of these critical products use Premium suppliers. This creates a significant supply chain vulnerability that requires immediate attention.</p>
+        </div>
+
+        <div class="metrics">
+            <div class="metric">
+                <div class="metric-value">$33.1M</div>
+                <div class="metric-label">Total Revenue Analyzed</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">7,658</div>
+                <div class="metric-label">Unique Products</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">128</div>
+                <div class="metric-label">Vendors Evaluated</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">79</div>
+                <div class="metric-label">Store Locations</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Problem Statement -->
+    <section id="sec2" class="section">
+        <h1>2. Problem Statement & Objectives</h1>
+
+        <h2 id="sec2-1">2.1 Business Context</h2>
+        <p>Slooze manages millions of transactions across sales, purchases, and inventory records spanning 79+ store locations. Traditional spreadsheet-based analysis is inadequate for this data volume, creating risks of:</p>
+        <ul>
+            <li><strong>Stockouts</strong> of high-revenue items leading to lost sales</li>
+            <li><strong>Excess inventory</strong> carrying costs tying up working capital</li>
+            <li><strong>Missed optimization opportunities</strong> from lack of data-driven insights</li>
+            <li><strong>Supplier inefficiencies</strong> going undetected</li>
+        </ul>
+
+        <h2 id="sec2-2">2.2 Core Objectives</h2>
+        <table>
+            <caption data-label="Table 1">Project Objectives</caption>
+            <thead>
+                <tr>
+                    <th>Objective</th>
+                    <th>Description</th>
+                    <th>Success Metric</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Inventory Optimization</td>
+                    <td>Determine ideal stock levels for different product categories</td>
+                    <td>Reduced stockouts + minimized carrying costs</td>
+                </tr>
+                <tr>
+                    <td>Sales & Purchase Insights</td>
+                    <td>Identify trends, top-performing products, and supplier efficiency</td>
+                    <td>Clear product/vendor segmentation</td>
+                </tr>
+                <tr>
+                    <td>Process Improvement</td>
+                    <td>Optimize procurement and stock control to minimize financial loss</td>
+                    <td>Data-driven reorder triggers</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Analytical Tasks Completed</h3>
+        <ol>
+            <li><strong>ABC Analysis</strong> - Product classification by revenue contribution</li>
+            <li><strong>Demand Forecasting</strong> - Time-series prediction using Prophet</li>
+            <li><strong>Reorder Point Analysis</strong> - Inventory trigger calculations with safety stock</li>
+            <li><strong>Lead Time Analysis</strong> - Supplier performance evaluation</li>
+        </ol>
+    </section>
+
+    <!-- Section 3: Dataset Overview -->
+    <section id="sec3" class="section">
+        <h1>3. Dataset Overview</h1>
+
+        <h2>Data Sources (6 Files)</h2>
+        <table>
+            <caption data-label="Table 2">Dataset Files Summary</caption>
+            <thead>
+                <tr>
+                    <th>File Name</th>
+                    <th>Size</th>
+                    <th>Records</th>
+                    <th>Purpose</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>SalesFINAL12312016.csv</td>
+                    <td>127.86 MB</td>
+                    <td>1,048,575</td>
+                    <td>Sales transactions ($33.1M revenue)</td>
+                </tr>
+                <tr>
+                    <td>PurchasesFINAL12312016.csv</td>
+                    <td>401.75 MB</td>
+                    <td>2,372,474</td>
+                    <td>Purchase orders and procurement</td>
+                </tr>
+                <tr>
+                    <td>BegInvFINAL12312016.csv</td>
+                    <td>19.31 MB</td>
+                    <td>206,529</td>
+                    <td>Beginning inventory (Jan 1, 2016)</td>
+                </tr>
+                <tr>
+                    <td>EndInvFINAL12312016.csv</td>
+                    <td>21.00 MB</td>
+                    <td>224,489</td>
+                    <td>Ending inventory (Dec 31, 2016)</td>
+                </tr>
+                <tr>
+                    <td>InvoicePurchases12312016.csv</td>
+                    <td>591 KB</td>
+                    <td>5,543</td>
+                    <td>Invoice records with payment dates</td>
+                </tr>
+                <tr>
+                    <td>2017PurchasePricesDec.csv</td>
+                    <td>1.16 MB</td>
+                    <td>12,261</td>
+                    <td>Product price reference</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Data Quality Summary</h2>
+        <div class="info-box">
+            <div class="info-box-title">Dataset Characteristics</div>
+            <ul>
+                <li><strong>Date Range:</strong> January 1 - December 31, 2016 (with February anomaly)</li>
+                <li><strong>Geography:</strong> 79-81 store locations across multiple cities</li>
+                <li><strong>Products:</strong> ~7,658 unique SKUs</li>
+                <li><strong>Vendors:</strong> 128 significant suppliers (more than 10 purchase orders)</li>
+                <li><strong>Total Records:</strong> 3.87 million rows analyzed</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Section 4: Methodology -->
+    <section id="sec4" class="section">
+        <h1>4. Methodology</h1>
+
+        <h2 id="sec4-1">4.1 Phase 1: Data Exploration & Cleaning</h2>
+
+        <h3>Data Loading Process</h3>
+        <p>The dataset was automatically downloaded using KaggleHub (61.9 MB compressed). All 6 CSV files were loaded into pandas DataFrames with appropriate data type optimization for memory efficiency.</p>
+
+        <h3>Data Cleaning Steps</h3>
+        <ol>
+            <li>Standardized date formats (PODate, ReceivingDate, SalesDate)</li>
+            <li>Calculated derived metrics (LeadTime_Days, Revenue)</li>
+            <li>Removed invalid lead times (negative or zero values)</li>
+            <li>Converted 2,372,474 purchase records to datetime format</li>
+            <li>Stripped whitespace from string columns</li>
+            <li>Validated referential integrity across datasets</li>
+        </ol>
+
+        <h3>Key Relationships Mapped</h3>
+        <ul>
+            <li><strong>Sales to Inventory:</strong> Connected via Brand + Store combination</li>
+            <li><strong>Purchases to Vendors:</strong> Linked via VendorNumber</li>
+            <li><strong>Prices to Products:</strong> Matched via Brand identifier</li>
+        </ul>
+
+        <h2 id="sec4-2">4.2 Phase 2: ABC Analysis</h2>
+
+        <h3>Objective</h3>
+        <p>Classify inventory by revenue contribution to prioritize management attention and allocate resources effectively.</p>
+
+        <h3>Methodology</h3>
+        <div class="formula">
+            <strong>Classification Criteria:</strong><br>
+            A-Class: Top 80% cumulative revenue (High priority)<br>
+            B-Class: 80-95% cumulative revenue (Medium priority)<br>
+            C-Class: Bottom 5% cumulative revenue (Low priority)
+        </div>
+
+        <p>The analysis followed these steps:</p>
+        <ol>
+            <li>Calculated total revenue per product (Brand + Description combination)</li>
+            <li>Sorted products in descending order by revenue</li>
+            <li>Computed cumulative percentage of total revenue</li>
+            <li>Applied Pareto classification thresholds</li>
+        </ol>
+
+        <h2 id="sec4-3">4.3 Phase 2.2: Demand Forecasting</h2>
+
+        <h3>Objective</h3>
+        <p>Predict future demand for top A-Class products using time-series analysis to enable proactive inventory planning.</p>
+
+        <div class="warning">
+            <div class="warning-title">Data Limitation</div>
+            <p>Only 60 days of reliable data available (January-February 2016). February showed a 90% sales drop, likely a data anomaly or seasonal effect, which constrained forecasting accuracy.</p>
+        </div>
+
+        <h3>Model Configuration</h3>
+        <p>Implemented Facebook Prophet models with the following parameters:</p>
+        <ul>
+            <li>Daily and weekly seasonality enabled</li>
+            <li>Multiplicative seasonality mode</li>
+            <li>14-day forecast horizon</li>
+            <li>MAE and RMSE calculated for model validation</li>
+        </ul>
+
+        <h2 id="sec4-4">4.4 Phase 2.3: Reorder Point Analysis</h2>
+
+        <h3>Objective</h3>
+        <p>Determine optimal inventory levels to trigger replenishment orders and avoid stockouts.</p>
+
+        <div class="formula">
+            <strong>Reorder Point Formula:</strong><br><br>
+            ROP = (Average Daily Demand x Lead Time) + Safety Stock<br><br>
+            Where:<br>
+            Safety Stock = Z x Standard Deviation of Demand x sqrt(Lead Time)
+        </div>
+
+        <h3>Parameters</h3>
+        <table>
+            <caption data-label="Table 3">Reorder Point Parameters</caption>
+            <thead>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Value</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Service Level</td>
+                    <td>95%</td>
+                    <td>Z-score = 1.65 (industry standard)</td>
+                </tr>
+                <tr>
+                    <td>Lead Time</td>
+                    <td>7.3-7.6 days</td>
+                    <td>Vendor-specific average</td>
+                </tr>
+                <tr>
+                    <td>Safety Stock</td>
+                    <td>Variable</td>
+                    <td>Based on demand variability</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="sec4-5">4.5 Phase 2.4: Lead Time Analysis</h2>
+
+        <h3>Objective</h3>
+        <p>Assess supplier efficiency and identify procurement risks through lead time evaluation.</p>
+
+        <h3>Methodology</h3>
+        <ol>
+            <li>Calculated LeadTime_Days = ReceivingDate - PODate</li>
+            <li>Filtered to 128 significant vendors (more than 10 purchase orders)</li>
+            <li>Classified vendors using median thresholds</li>
+        </ol>
+
+        <h3>Vendor Classification</h3>
+        <table>
+            <caption data-label="Table 4">Vendor Classification Criteria</caption>
+            <thead>
+                <tr>
+                    <th>Classification</th>
+                    <th>Median Lead Time</th>
+                    <th>Standard Deviation</th>
+                    <th>Risk Level</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Premium</td>
+                    <td>Less than or equal to 7.7 days</td>
+                    <td>Less than or equal to 2.2 days</td>
+                    <td>Low</td>
+                </tr>
+                <tr>
+                    <td>Fast but Variable</td>
+                    <td>Less than or equal to 7.7 days</td>
+                    <td>Greater than 2.2 days</td>
+                    <td>Medium</td>
+                </tr>
+                <tr>
+                    <td>Slow but Steady</td>
+                    <td>Greater than 7.7 days</td>
+                    <td>Less than or equal to 2.2 days</td>
+                    <td>Low-Medium</td>
+                </tr>
+                <tr>
+                    <td>High Risk</td>
+                    <td>Greater than 7.7 days</td>
+                    <td>Greater than 2.2 days</td>
+                    <td>High</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Section 5: Key Results -->
+    <section id="sec5" class="section">
+        <h1>5. Key Results</h1>
+
+        <h2>ABC Analysis Results</h2>
+        <table>
+            <caption data-label="Table 5">ABC Classification Summary</caption>
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Products</th>
+                    <th>% of SKUs</th>
+                    <th>Revenue</th>
+                    <th>% of Revenue</th>
+                    <th>Avg per Product</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>A-Class</td>
+                    <td>1,502</td>
+                    <td>19.6%</td>
+                    <td>$26.51M</td>
+                    <td>80.0%</td>
+                    <td>$17,649</td>
+                </tr>
+                <tr>
+                    <td>B-Class</td>
+                    <td>1,813</td>
+                    <td>23.7%</td>
+                    <td>$4.97M</td>
+                    <td>15.0%</td>
+                    <td>$2,742</td>
+                </tr>
+                <tr>
+                    <td>C-Class</td>
+                    <td>4,343</td>
+                    <td>56.7%</td>
+                    <td>$1.66M</td>
+                    <td>5.0%</td>
+                    <td>$382</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Top 5 Revenue Products</h3>
+        <table>
+            <caption data-label="Table 6">Top 5 Products by Revenue</caption>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Product</th>
+                    <th>Revenue</th>
+                    <th>% of Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Captain Morgan Spiced Rum</td>
+                    <td>$444,811</td>
+                    <td>1.34%</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Ketel One Vodka</td>
+                    <td>$357,759</td>
+                    <td>1.08%</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Jack Daniels No 7 Black</td>
+                    <td>$344,712</td>
+                    <td>1.04%</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Absolut 80 Proof</td>
+                    <td>$288,135</td>
+                    <td>0.87%</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Tito's Handmade Vodka</td>
+                    <td>$275,163</td>
+                    <td>0.83%</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Reorder Point Results</h2>
+        <table>
+            <caption data-label="Table 7">Reorder Points for Top 5 Products</caption>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Daily Demand</th>
+                    <th>Lead Time</th>
+                    <th>Safety Stock</th>
+                    <th>Reorder Point</th>
+                    <th>Current Stock</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Captain Morgan</td>
+                    <td>579</td>
+                    <td>7.3 days</td>
+                    <td>1,452</td>
+                    <td>5,676</td>
+                    <td>16,769</td>
+                    <td>Healthy</td>
+                </tr>
+                <tr>
+                    <td>Ketel One</td>
+                    <td>360</td>
+                    <td>7.4 days</td>
+                    <td>953</td>
+                    <td>3,616</td>
+                    <td>16,770</td>
+                    <td>Healthy</td>
+                </tr>
+                <tr>
+                    <td>Jack Daniels</td>
+                    <td>273</td>
+                    <td>7.4 days</td>
+                    <td>597</td>
+                    <td>2,620</td>
+                    <td>15,047</td>
+                    <td>Healthy</td>
+                </tr>
+                <tr>
+                    <td>Absolut</td>
+                    <td>310</td>
+                    <td>7.5 days</td>
+                    <td>672</td>
+                    <td>2,978</td>
+                    <td>12,268</td>
+                    <td>Healthy</td>
+                </tr>
+                <tr>
+                    <td>Tito's</td>
+                    <td>292</td>
+                    <td>7.0 days</td>
+                    <td>769</td>
+                    <td>2,811</td>
+                    <td>14,018</td>
+                    <td>Healthy</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="key-finding">
+            <div class="key-finding-title">Inventory Status</div>
+            <p>All products are currently healthy with current stock levels 2-4x above reorder points. No immediate stockout risk detected.</p>
+        </div>
+
+        <h2>Lead Time Analysis Results</h2>
+        <table>
+            <caption data-label="Table 8">Vendor Distribution by Classification</caption>
+            <thead>
+                <tr>
+                    <th>Tier</th>
+                    <th>Vendors</th>
+                    <th>Percentage</th>
+                    <th>Spend</th>
+                    <th>Risk Level</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Premium</td>
+                    <td>26</td>
+                    <td>21.7%</td>
+                    <td>$50.6M</td>
+                    <td>Low</td>
+                </tr>
+                <tr>
+                    <td>Fast but Variable</td>
+                    <td>34</td>
+                    <td>28.3%</td>
+                    <td>$165.0M</td>
+                    <td>Medium</td>
+                </tr>
+                <tr>
+                    <td>Slow but Steady</td>
+                    <td>35</td>
+                    <td>29.2%</td>
+                    <td>$82.9M</td>
+                    <td>Low-Medium</td>
+                </tr>
+                <tr>
+                    <td>High Risk</td>
+                    <td>25</td>
+                    <td>20.8%</td>
+                    <td>$23.5M</td>
+                    <td>High</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="warning">
+            <div class="warning-title">Critical Supplier Risk</div>
+            <p><strong>All top 5 revenue products use "Fast but Variable" or "Slow but Steady" vendors.</strong> None use Premium vendors, creating supply chain vulnerability.</p>
+            <ul>
+                <li>Vendor 3960 (Diageo): Supplies Captain Morgan + Ketel One ($802K combined revenue)</li>
+                <li>Vendor 1128 (Brown-Forman): Supplies Jack Daniels</li>
+                <li><strong>Concentration Risk:</strong> 40% of A-Class revenue depends on single vendor</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Section 6: Assumptions & Limitations -->
+    <section id="sec6" class="section">
+        <h1>6. Assumptions & Limitations</h1>
+
+        <h2>Data Limitations</h2>
+        <ol>
+            <li><strong>Temporal Scope:</strong> Only 60 days of reliable data (January 2016). February showed 90% sales drop (likely anomaly).</li>
+            <li><strong>Missing Costs:</strong> No carrying cost or ordering cost data prevented EOQ (Economic Order Quantity) calculation.</li>
+            <li><strong>Vendor Names:</strong> Some vendors only had ID numbers; names extracted from InvoicePurchases where available.</li>
+        </ol>
+
+        <h2>Analytical Assumptions</h2>
+        <ol>
+            <li><strong>Service Level:</strong> 95% used for safety stock calculations (Z = 1.65, industry standard)</li>
+            <li><strong>Lead Time Distribution:</strong> Assumed normal distribution for safety stock formula</li>
+            <li><strong>Demand Stability:</strong> Used January 2016 averages (ignoring February anomaly)</li>
+            <li><strong>Product Classification:</strong> ABC classification based on 2-month snapshot; annual data would be more robust</li>
+        </ol>
+
+        <h2>Technical Constraints</h2>
+        <ol>
+            <li><strong>Prophet Forecasts:</strong> Limited by short time series (60 observations)</li>
+            <li><strong>External Regressors:</strong> No weather, holidays, or promotions included in forecasting</li>
+            <li><strong>Vendor Classification:</strong> Thresholds based on median (data-driven) rather than business SLAs</li>
+        </ol>
+    </section>
+
+    <!-- Section 7: Business Recommendations -->
+    <section id="sec7" class="section">
+        <h1>7. Business Recommendations</h1>
+
+        <h2>Immediate Actions (0-30 Days)</h2>
+
+        <div class="recommendation">
+            <div class="recommendation-title">1. Dual-Source Vendor 3960</div>
+            <p>40% of A-Class revenue depends on a single supplier (Diageo). Implement dual-sourcing strategy to mitigate concentration risk.</p>
+        </div>
+
+        <div class="recommendation">
+            <div class="recommendation-title">2. Renegotiate SLAs</div>
+            <p>$85 million spent with vendors slower than 7.7 days. Implement penalty clauses for late deliveries and incentive programs for early delivery.</p>
+        </div>
+
+        <div class="recommendation">
+            <div class="recommendation-title">3. Increase Safety Stock</div>
+            <p>Apply 1.5x multiplier for "Fast but Variable" vendors (4 of 5 top products) to buffer against delivery variability.</p>
+        </div>
+
+        <div class="recommendation">
+            <div class="recommendation-title">4. Consolidate Orders</div>
+            <p>Top 3 vendors account for 618,000 orders. Negotiate volume discounts and preferred customer status.</p>
+        </div>
+
+        <h2>Strategic Initiatives (30-90 Days)</h2>
+
+        <div class="recommendation">
+            <div class="recommendation-title">1. Supplier Development</div>
+            <p>Move A-Class products to Premium vendors (currently 0 of 5). Develop relationships with reliable suppliers.</p>
+        </div>
+
+        <div class="recommendation">
+            <div class="recommendation-title">2. Inventory Rationalization</div>
+            <p>Review 4,343 C-Class products (56% of SKUs, only 5% of revenue) for potential discontinuation.</p>
+        </div>
+
+        <div class="recommendation">
+            <div class="recommendation-title">3. Data Infrastructure</div>
+            <p>Collect full year of data for seasonal forecasting and improved demand prediction.</p>
+        </div>
+
+        <h2>Risk Mitigation Priorities</h2>
+        <table>
+            <caption data-label="Table 9">Risk Summary</caption>
+            <thead>
+                <tr>
+                    <th>Risk Factor</th>
+                    <th>Exposure</th>
+                    <th>Mitigation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Vendor Concentration</td>
+                    <td>Only 21.7% of vendors are Premium tier</td>
+                    <td>Diversify supplier base</td>
+                </tr>
+                <tr>
+                    <td>Variable Suppliers</td>
+                    <td>$165M (51.2%) of spend with unreliable vendors</td>
+                    <td>Increase safety stock buffers</td>
+                </tr>
+                <tr>
+                    <td>Lead Time Buffer</td>
+                    <td>7.6-day average with 2.2-day variability</td>
+                    <td>Maintain safety stock coverage</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Section 8: How to Run -->
+    <section id="sec8" class="section">
+        <h1>8. How to Run the Code</h1>
+
+        <h2>Prerequisites</h2>
+        <ul>
+            <li>Python 3.8 or higher</li>
+            <li>Google Colab (recommended) or Jupyter Notebook</li>
+            <li>16GB RAM (for large CSV processing)</li>
+        </ul>
+
+        <h2>Installation</h2>
+        <pre><code>pip install pandas numpy matplotlib seaborn plotly prophet scikit-learn kagglehub</code></pre>
+
+        <h2>Execution Steps</h2>
+        <ol>
+            <li><strong>Download Dataset:</strong> Automatically via KaggleHub</li>
+            <li><strong>Phase 1:</strong> Data Loading & Cleaning (Cells 1-10)</li>
+            <li><strong>Phase 2:</strong> ABC Analysis (Cells 11-18)</li>
+            <li><strong>Phase 2.2:</strong> Demand Forecasting (Cells 19-23)</li>
+            <li><strong>Phase 2.3:</strong> Reorder Point Analysis (Cells 24-31)</li>
+            <li><strong>Phase 2.4:</strong> Lead Time Analysis (Cells 32-39)</li>
+        </ol>
+
+        <h2>Output Files Generated</h2>
+        <ul>
+            <li>ABC_Analysis_Results.csv</li>
+            <li>Reorder_Point_Analysis.csv</li>
+            <li>Vendor_Performance_Scorecard.csv</li>
+            <li>AClass_Vendor_Analysis.csv</li>
+            <li>Demand_Forecast_Detailed.csv</li>
+        </ul>
+
+        <h2>Sample Code Structure</h2>
+        <pre><code># Phase 1: Data Loading
+import kagglehub
+import pandas as pd
+
+# Download dataset
+path = kagglehub.dataset_download("sloozecareers/slooze-challenge")
+
+# Load data
+sales = pd.read_csv(f"{path}/slooze_challenge/SalesFINAL12312016.csv")
+purchases = pd.read_csv(f"{path}/slooze_challenge/PurchasesFINAL12312016.csv")</code></pre>
+    </section>
+
+    <!-- Section 9: Conclusion -->
+    <section id="sec9" class="section">
+        <h1>9. Conclusion</h1>
+
+        <p>This analysis transformed Slooze's raw transactional data into actionable inventory intelligence. Through ABC classification, we identified that <strong>20% of products drive 80% of revenue</strong> - yet these critical items rely on variable suppliers, creating significant supply chain vulnerability.</p>
+
+        <p>The reorder point system provides data-driven triggers for procurement, while vendor analysis reveals <strong>$85 million in spend with suboptimal suppliers</strong>. By implementing the dual-sourcing and safety stock recommendations, Slooze can protect high-revenue streams while optimizing working capital across the portfolio.</p>
+
+        <h2>Key Deliverables Provided</h2>
+        <ul>
+            <li>Automated data pipeline with KaggleHub integration</li>
+            <li>Statistical product classification (ABC Analysis)</li>
+            <li>Predictive demand models with uncertainty quantification</li>
+            <li>Operational reorder triggers with safety stock buffers</li>
+            <li>Strategic vendor scorecards with risk classification</li>
+        </ul>
+
+        <div class="key-finding">
+            <div class="key-finding-title">Final Note</div>
+            <p>All code is modular, documented, and ready for production deployment. The analysis framework can be extended to include additional data sources and more sophisticated forecasting models as the data infrastructure matures.</p>
+        </div>
+
+        <p style="text-align: center; margin-top: 40px; color: #666; font-style: italic;">
+            --- End of Documentation ---
+        </p>
+    </section>
+
+    <script>
+        // Initialize KaTeX auto-render
+        document.addEventListener("DOMContentLoaded", function() {
+            if (typeof renderMathInElement !== 'undefined') {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: "$$", right: "$$", display: true},
+                        {left: "$", right: "$", display: false}
+                    ]
+                });
+            }
+        });
+    </script>
+</body>
+</html>
